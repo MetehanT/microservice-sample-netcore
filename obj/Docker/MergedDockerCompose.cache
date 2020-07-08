@@ -1,0 +1,103 @@
+networks:
+  elastic:
+    driver: bridge
+services:
+  elasticsearch:
+    container_name: elasticsearch
+    environment:
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+      bootstrap.memory_lock: "true"
+      cluster.name: es-docker-cluster
+      discovery.type: single-node
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
+    networks:
+      elastic: {}
+    ports:
+    - published: 9200
+      target: 9200
+    ulimits:
+      memlock:
+        hard: -1
+        soft: -1
+    volumes:
+    - elasticsearch-data:/usr/share/elasticsearch/data:rw
+  kibana:
+    container_name: kibana
+    depends_on:
+    - elasticsearch
+    environment:
+      ELASTICSEARCH_URL: http://172.27.240.1:9200
+    image: docker.elastic.co/kibana/kibana:7.7.0
+    networks:
+      elastic: {}
+    ports:
+    - published: 5601
+      target: 5601
+  ocelotgateway:
+    build:
+      context: C:\Users\M\source\repos\Eshop
+      dockerfile: OcelotGateway/Dockerfile
+    depends_on:
+    - ordermicroservice
+    - productmicroservice
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    image: ocelotgateway
+    ports:
+    - published: 5000
+      target: 80
+  ordermicroservice:
+    build:
+      context: C:\Users\M\source\repos\Eshop
+      dockerfile: OrderMicroservice/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    image: ordermicroservice
+    ports:
+    - published: 5002
+      target: 80
+  productmicroservice:
+    build:
+      context: C:\Users\M\source\repos\Eshop
+      dockerfile: ProductMicroservice/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    image: productmicroservice
+    ports:
+    - published: 5001
+      target: 80
+  rabbitMq:
+    container_name: rabbitMQ
+    environment:
+      RABBITMQ_DEFAULT_PASS: password
+      RABBITMQ_DEFAULT_USER: admin
+    image: rabbitmq:3-management
+    ports:
+    - published: 5671
+      target: 5671
+    - published: 5672
+      target: 5672
+    - published: 15672
+      target: 15672
+  ui.web:
+    build:
+      context: C:\Users\M\source\repos\Eshop
+      dockerfile: UI.Web/Dockerfile
+    depends_on:
+    - ocelotgateway
+    - ordermicroservice
+    - productmicroservice
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      OrderingUrl: http://ordermicroservice
+      ProductUrl: http://productmicroservice
+    image: uiweb
+    links:
+    - rabbitMq
+    ports:
+    - published: 5005
+      target: 80
+    - target: 80
+version: '3.4'
+volumes:
+  elasticsearch-data: {}

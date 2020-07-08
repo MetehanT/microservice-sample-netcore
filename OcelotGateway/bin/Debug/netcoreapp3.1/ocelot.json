@@ -1,0 +1,55 @@
+﻿{
+  "ReRoutes": [
+    {
+      "DownstreamPathTemplate": "/api/products",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "productmicroservice", //docker compose için configure yaptık. Ordaki service isimlerine göre atadık docker compose kullanmasak localhost olmalı
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/products"
+    },
+    {
+      "DownstreamPathTemplate": "/api/products/{id}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "productmicroservice",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/products/{id}"
+    },
+    {
+      "DownstreamPathTemplate": "/api/orders",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ordermicroservice",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/orders"
+    },
+    {
+      "DownstreamPathTemplate": "/api/orders/{id}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ordermicroservice",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/orders/{id}"
+    }
+  ],
+  "GlobalConfiguration": {
+    //"BaseUrl": "http://localhost:5000"
+  }
+}

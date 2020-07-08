@@ -1,0 +1,21 @@
+﻿@model UI.Web.Auth.Models.CreateVM
+@{
+    ViewData["Title"] = "Create";
+}
+
+	<form asp-action="Create">
+		<div class="form-group">
+			<label>Kullanıcı Adı</label>
+			<input type="text" class="form-control" placeholder="Kullanıcı Adı" asp-for="UserName">
+		</div>
+		<div class="form-group">
+			<label>Email</label>
+			<input type="email" class="form-control" placeholder="E-Mail" asp-for="Email">
+		</div>
+		<div class="form-group">
+			<label>Şifre</label>
+			<input type="password" class="form-control" placeholder="Şifre" asp-for="Password">
+		</div>
+		<button type="submit" class="btn btn-primary">Kayıt Ol</button>
+	</form>
+

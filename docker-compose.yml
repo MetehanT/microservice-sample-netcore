@@ -1,0 +1,95 @@
+version: '3.4'
+
+services:
+  productmicroservice:
+    image: ${DOCKER_REGISTRY-}productmicroservice
+    build:
+      context: .
+      dockerfile: ProductMicroservice/Dockerfile
+    ports:
+      - "5001:80"
+
+  ordermicroservice:
+    image: ${DOCKER_REGISTRY-}ordermicroservice
+    build:
+      context: .
+      dockerfile: OrderMicroservice/Dockerfile
+    ports:
+      - "5002:80"
+
+  ui.web:
+    image: ${DOCKER_REGISTRY-}uiweb
+    build:
+      context: .
+      dockerfile: UI.Web/Dockerfile
+    environment:
+     - ProductUrl=http://productmicroservice
+     - OrderingUrl=http://ordermicroservice
+    ports:
+     - "5005:80"
+    depends_on:
+     - productmicroservice
+     - ordermicroservice
+     - ocelotgateway
+    links:
+     - rabbitMq
+
+  ocelotgateway:
+    image: ${DOCKER_REGISTRY-}ocelotgateway
+    build:
+      context: .
+      dockerfile: OcelotGateway/Dockerfile
+    ports:
+     - "5000:80"
+    depends_on:
+     - productmicroservice
+     - ordermicroservice
+
+  rabbitMq:
+    container_name: rabbitMQ
+    image: rabbitmq:3-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+      - "5671:5671"
+    environment: 
+      RABBITMQ_DEFAULT_PASS: password
+      RABBITMQ_DEFAULT_USER: admin
+
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
+    ports:
+     - "9200:9200"
+    volumes:
+     - elasticsearch-data:/usr/share/elasticsearch/data
+    environment:
+     - cluster.name=es-docker-cluster
+     - bootstrap.memory_lock=true
+     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+     - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+     - elastic
+
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:7.7.0
+    ports:
+     - "5601:5601"
+    depends_on:
+     - elasticsearch
+    environment:
+     - ELASTICSEARCH_URL=http://172.27.240.1:9200
+    networks:
+     - elastic
+
+networks:
+  elastic:
+    driver: bridge
+
+volumes:
+  elasticsearch-data:

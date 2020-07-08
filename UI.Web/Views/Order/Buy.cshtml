@@ -1,0 +1,55 @@
+﻿@model UI.Web.Models.OrderCreate
+
+@{
+    ViewData["Title"] = "Buy";
+}
+
+<h1>Buy</h1>
+
+<h4>OrderCreate</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+		<form asp-action="Buy">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<div class="form-group">
+				<label asp-for="ProductId" class="control-label">Ürün Id</label>
+				<input asp-for="ProductId" class="form-control" readonly="true" />
+				<span asp-validation-for="ProductId" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="ProductName" class="control-label">Ürün ismi</label>
+				<input asp-for="ProductName" class="form-control" readonly="true" />
+				<span asp-validation-for="ProductName" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Price" class="control-label">Fiyat</label>
+				<input asp-for="Price" class="form-control" readonly="true" />
+				<span asp-validation-for="Price" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="FirstName" class="control-label">Adınız</label>
+				<input asp-for="FirstName" class="form-control" />
+				<span asp-validation-for="FirstName" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="LastName" class="control-label">Soyadınız</label>
+				<input asp-for="LastName" class="form-control" />
+				<span asp-validation-for="LastName" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Adress" class="control-label">Adres</label>
+				<input asp-for="Adress" class="form-control" />
+				<span asp-validation-for="Adress" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<input type="submit" value="Satın Al" class="btn btn-primary" />
+			</div>
+		</form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" asp-controller="Product">Back to List</a>
+</div>
+
